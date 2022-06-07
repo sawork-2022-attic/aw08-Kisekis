@@ -1,0 +1,40 @@
+package com.micropos.delivery.rest;
+
+import com.micropos.delivery.api.DeliveryApi;
+import com.micropos.delivery.dto.DeliveryDto;
+import com.micropos.delivery.mapper.DeliveryMapper;
+import com.micropos.delivery.model.Delivery;
+import com.micropos.delivery.service.DeliveryService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@RestController
+@RequestMapping("/api")
+public class DeliveryController implements DeliveryApi {
+
+    private final DeliveryMapper deliveryMapper;
+
+    private final DeliveryService deliveryService;
+
+    public DeliveryController(DeliveryService deliveryService, DeliveryMapper deliveryMapper) {
+        this.deliveryMapper = deliveryMapper;
+        this.deliveryService = deliveryService;
+    }
+
+    @Override
+    public ResponseEntity<DeliveryDto> showDeliveryById(String id) {
+        Delivery ds = this.deliveryService.getDelivery(id);
+        DeliveryDto d = deliveryMapper.toDeliveryDto(ds);
+        d.setItems(deliveryMapper.toItemsDto(ds.getItems()));
+        if (d == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(d, HttpStatus.OK);
+    }
+
+}

@@ -1,20 +1,24 @@
-# aw08
+1. 通过post添加商品至购物车
 
-Run the project with `mvn spring-boot:run` and send request to `http://localhost:8080/check`. You should see an reponses in json format like the following.
+   ![image-20220608012155108](README.assets/image-20220608012155108.png)
 
-```json
-{
-    "icon_url": "https://assets.chucknorris.host/img/avatar/chuck-norris.png",
-    "id": "kswv7NIaTCaIIErlBzODaA",
-    "url": "https://api.chucknorris.io/jokes/kswv7NIaTCaIIErlBzODaA",
-    "value": "Chuck Norris's shadow weighs 250 pounds and can kick your ass ."
-}
-```
+2. checkout结算，生成order
 
-Try to understand the provided code which demonstrates spring integration between a spring boot application with an externel http service (https://api.chucknorris.io/jokes/random).
+   ![image-20220608012208568](README.assets/image-20220608012208568.png)
 
-Please implement delivery as an standalone service (just like the random joke service). Refer the sample code to integrate your Micropos system with delivery service so that user can check delivery status on Miropos which actually forwards user request to delivery service on demand.
+![image-20220608012220953](README.assets/image-20220608012220953.png)
 
-![](Micropos.svg)
+3. 由order生成delivery，id为71630
 
-Consider the advantage by doing so and write it down in your readme file.
+4. 通过直接访问delivery service（8084端口），获取delivery信息
+
+   ![image-20220608012327998](README.assets/image-20220608012327998.png)
+
+包含了商品信息，状态，id
+
+5. 使用Spring integration，从gateway（8080）获取delivery信息
+
+![image-20220608012419847](README.assets/image-20220608012419847.png)
+
+---
+
