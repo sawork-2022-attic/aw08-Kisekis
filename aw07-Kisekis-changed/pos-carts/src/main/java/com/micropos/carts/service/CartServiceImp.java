@@ -12,10 +12,12 @@ import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
 import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 
 import java.io.Serializable;
@@ -30,12 +32,21 @@ public class CartServiceImp implements CartService, Serializable {
 
     @Autowired
     @LoadBalanced
+    private WebClient.Builder webClient;
+
+    @Autowired
+    @LoadBalanced
     protected RestTemplate restTemplate;
 
     @Override
     public void checkout(Cart cart) {
-        ResponseEntity<Order> orderResponseEntity = restTemplate.
-                getForEntity("http://order-service/api/order/checkout", Order.class);
+        webClient
+                .build()
+                .get()
+                .uri("http://order-service/api/order/checkout")
+                .retrieve()
+                .bodyToMono(Cart.class)
+                .subscribe();
         cart.emptyList();
     }
 

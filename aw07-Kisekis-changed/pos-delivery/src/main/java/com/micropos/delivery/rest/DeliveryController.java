@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,14 +29,11 @@ public class DeliveryController implements DeliveryApi {
     }
 
     @Override
-    public ResponseEntity<DeliveryDto> showDeliveryById(String id) {
+    public Mono<ResponseEntity<DeliveryDto>> showDeliveryById(String id, ServerWebExchange exchange) {
         Delivery ds = this.deliveryService.getDelivery(id);
         DeliveryDto d = deliveryMapper.toDeliveryDto(ds);
         d.setItems(deliveryMapper.toItemsDto(ds.getItems()));
-        if (d == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(d, HttpStatus.OK);
+        return Mono.just(new ResponseEntity<>(d, HttpStatus.OK));
     }
 
 }

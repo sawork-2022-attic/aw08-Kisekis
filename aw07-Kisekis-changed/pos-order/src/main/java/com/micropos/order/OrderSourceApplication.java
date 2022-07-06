@@ -11,6 +11,7 @@ import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
 
 
 @EnableEurekaClient
@@ -29,5 +30,11 @@ public class OrderSourceApplication {
     public static void main(String[] args) {
         SpringApplication.run(OrderSourceApplication.class, args);
         log.info("The OrderService Application has started...");
+    }
+
+    @Bean
+    @LoadBalanced
+    public WebClient.Builder webClientBuilder() {
+        return WebClient.builder();
     }
 }

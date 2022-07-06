@@ -3,18 +3,20 @@ package com.micropos.carts.rest;
 
 import com.micropos.carts.api.CartsApi;
 import com.micropos.carts.dto.CartDto;
-import com.micropos.carts.dto.InlineObjectDto;
+import com.micropos.carts.dto.ItemDto;
 import com.micropos.carts.mapper.CartMapper;
 import com.micropos.carts.model.Cart;
+import com.micropos.carts.model.Item;
 import com.micropos.carts.service.CartService;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.client.loadbalancer.LoadBalanced;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping("/api")
@@ -34,39 +36,41 @@ public class CartController implements CartsApi {
     }
 
     @Override
-    public ResponseEntity<CartDto> listItems(){
+    public Mono<ResponseEntity<CartDto>> listItems(ServerWebExchange exchange){
         CartDto cartDto = CartMapper.toCartDto(this.cart);
         if (cartDto == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return Mono.just(new ResponseEntity<>(HttpStatus.NOT_FOUND));
         }
-        return new ResponseEntity<>(cartDto, HttpStatus.OK);
+        return Mono.just(new ResponseEntity<>(cartDto, HttpStatus.OK));
     }
 
 
     @Override
-    public ResponseEntity<CartDto> deleteItemById(String id){
+    public Mono<ResponseEntity<CartDto>> deleteItemById(String id, ServerWebExchange exchange){
+
         CartService.delete(cart,id);
-        return new ResponseEntity<>(CartMapper.toCartDto(this.cart), HttpStatus.OK);
+        return Mono.just(new ResponseEntity<>(CartMapper.toCartDto(this.cart), HttpStatus.OK));
     }
 
     @Override
-    public ResponseEntity<CartDto> cartsCancelDelete() {
+    public Mono<ResponseEntity<CartDto>> cartsCancelDelete(ServerWebExchange exchange) {
         CartService.cancel(cart);
-        return new ResponseEntity<>(CartMapper.toCartDto(this.cart), HttpStatus.OK);
+        return Mono.just(new ResponseEntity<>(CartMapper.toCartDto(this.cart), HttpStatus.OK));
 
     }
 
     @Override
-    public ResponseEntity<CartDto> cartsCheckoutGet() {
+    public Mono<ResponseEntity<CartDto>> cartsCheckoutGet(ServerWebExchange exchange) {
         CartService.checkout(cart);
-        return new ResponseEntity<>(CartMapper.toCartDto(this.cart), HttpStatus.OK);
-
+        return Mono.just(new ResponseEntity<>(CartMapper.toCartDto(this.cart), HttpStatus.OK));
     }
 
+
+
     @Override
-    public ResponseEntity<CartDto> cartsPost(@RequestBody InlineObjectDto json) {
-        CartService.add(cart,json.getId(), json.getQuantity());
-        return new ResponseEntity<>(CartMapper.toCartDto(this.cart), HttpStatus.OK);
+    public Mono<ResponseEntity<CartDto>> addItemById(String id,ServerWebExchange exchange) {
+        CartService.add(cart,id, 1);
+        return Mono.just(new ResponseEntity<>(CartMapper.toCartDto(this.cart),HttpStatus.OK));
     }
 
 }

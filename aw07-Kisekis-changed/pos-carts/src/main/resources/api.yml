@@ -20,27 +20,6 @@ paths:
                 $ref: '#/components/schemas/Cart'
         default:
           description: unexpected error
-    post:
-      summary: Adds a new item
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                quantity:
-                  type: integer
-                id:
-                  type: string
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Cart'
-        '404':
-          description: error
   /carts/{itemId}:
     get:
       summary: Info for a specific item
@@ -60,6 +39,28 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Item'
+          description: Expected response to a valid request
+
+        default:
+          description: unexpected error
+    post:
+      summary: Add for a specific item
+      operationId: addItemById
+      tags:
+        - item
+      parameters:
+        - name: itemId
+          in: path
+          required: true
+          description: The id of the item to add
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
           description: Expected response to a valid request
 
         default:

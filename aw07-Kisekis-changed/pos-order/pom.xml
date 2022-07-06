@@ -21,6 +21,9 @@
                     <modelNameSuffix>Dto</modelNameSuffix>
                     <apiPackage>com.micropos.order.api</apiPackage>
                     <modelPackage>com.micropos.order.dto</modelPackage>
+                    <configOptions>
+                        <reactive>true</reactive>
+                    </configOptions>
                 </configuration>
             </plugin>
         </plugins>
